@@ -22,11 +22,16 @@ const Home = () => {
       navigate('/login');
     } else {
       fetchExpensesData();
-      fetchCategories();
     }
   }, [token, navigate]);
 
-  const fetchExpensesData = () => {
+  useEffect(() => {
+    if (showForm) {
+      fetchCategories();
+    }
+  }, [showForm]);
+
+  function fetchExpensesData() {
     axios.post('http://127.0.0.1:8000/fetch_expenses_data', {}, { headers })
       .then(response => {
         const sortedData = response.data.sort((a, b) => new Date(b.date) - new Date(a.date));
@@ -35,9 +40,9 @@ const Home = () => {
       .catch(error => {
         console.error("There was an error fetching the data!", error);
       });
-  };
+  }
 
-  const fetchCategories = () => {
+  function fetchCategories(e) {
     axios.get('http://127.0.0.1:8000/get_categories', { headers })
       .then(response => {
         setCategories(response.data.categories);
